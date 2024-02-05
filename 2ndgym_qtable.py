@@ -1,11 +1,16 @@
+import numpy as np
 import gymnasium as gym
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
-import numpy as np
 
-# Environment setup
+# Set seeds
+np.random.seed(42)  # Set numpy seed for reproducibility
+env_seed = 42  # Define a seed for the environment
+
+# Environment setup with seed
 size = 4
-random_map = generate_random_map(size=size)
+random_map = generate_random_map(size=size, seed=env_seed)  # Generate a reproducible random map
 env = gym.make('FrozenLake-v1', desc=random_map, is_slippery=True, render_mode=None)
+env.seed(env_seed)  # Set environment seed for reproducible results
 
 # Q-table initialization
 state_size = env.observation_space.n
@@ -24,8 +29,8 @@ min_epsilon = 0.01           # Minimum exploration probability
 decay_rate = 0.005           # Exponential decay rate for exploration probability
 
 for episode in range(total_episodes):
-    state = env.reset()
-    state=state[0]
+    state , info= env.reset()
+
     done = False
     #inner loop for single episode
     for step in range(max_steps):
