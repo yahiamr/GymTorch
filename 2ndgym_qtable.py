@@ -22,3 +22,9 @@ epsilon = 1.0                # Exploration rate
 max_epsilon = 1.0            # Exploration probability at start
 min_epsilon = 0.01           # Minimum exploration probability
 decay_rate = 0.005           # Exponential decay rate for exploration probability
+
+for episode in range(total_episodes):
+    state = env.reset()
+    done = False
+    #inner loop for single episode
+    
