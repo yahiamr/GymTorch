@@ -25,7 +25,7 @@ decay_rate = 0.005           # Exponential decay rate for exploration probabilit
 
 for episode in range(total_episodes):
     state = env.reset()
-    state[0]=state
+    state=state[0]
     done = False
     #inner loop for single episode
     for step in range(max_steps):
