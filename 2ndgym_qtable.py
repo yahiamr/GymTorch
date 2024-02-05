@@ -10,7 +10,6 @@ env_seed = 42  # Define a seed for the environment
 size = 4
 random_map = generate_random_map(size=size, seed=env_seed)  # Generate a reproducible random map
 env = gym.make('FrozenLake-v1', desc=random_map, is_slippery=True, render_mode=None)
-env.seed(env_seed)  # Set environment seed for reproducible results
 
 # Q-table initialization
 state_size = env.observation_space.n
@@ -57,3 +56,4 @@ for episode in range(total_episodes):
 
 # Print the trained Q-table
 print(Q_table)
+np.save('q_table.npy', Q_table)  # Saves the Q-table to 'q_table.npy'
