@@ -5,7 +5,7 @@ import numpy as np
 # Environment setup
 size = 4
 random_map = generate_random_map(size=size)
-env = gym.make('FrozenLake-v1', desc=random_map, is_slippery=True, render_mode="human")
+env = gym.make('FrozenLake-v1', desc=random_map, is_slippery=True, render_mode=None)
 
 # Q-table initialization
 state_size = env.observation_space.n
@@ -14,7 +14,7 @@ Q_table = np.zeros((state_size, action_size))
 
 
 # Hyperparameters
-total_episodes = 10      # Total episodes for training
+total_episodes = 100000      # Total episodes for training
 learning_rate = 0.8          # Learning rate
 max_steps = 99               # Max steps per episode
 gamma = 0.95                 # Discounting rate
@@ -47,3 +47,8 @@ for episode in range(total_episodes):
 
         if done:
             break
+ # Reduce epsilon (less exploration over time)
+    epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay_rate * episode)
+
+# Print the trained Q-table
+print(Q_table)
