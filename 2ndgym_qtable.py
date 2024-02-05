@@ -27,4 +27,24 @@ for episode in range(total_episodes):
     state = env.reset()
     done = False
     #inner loop for single episode
-    
+    for step in range(max_steps):
+         # Exploration-exploitation trade-off
+        if np.random.uniform(0, 1) < epsilon:
+            action = env.action_space.sample()  # Explore action space
+        else:
+            action = np.argmax(Q_table[state, :])  # Exploit learned values
+
+
+       # Take action and observe the outcome
+        new_state, reward, terminated, truncated, info = env.step(action)
+
+        # Determine if the episode is done (either terminated or truncated)
+        done = terminated or truncated
+
+        # Update Q-table
+      #  Q_table[state, action] = Q_table[state, action] + learning_rate * (reward + gamma * np.max(Q_table[new_state, :]) - Q_table[state, action])
+
+        state = new_state
+
+        if done:
+            break
