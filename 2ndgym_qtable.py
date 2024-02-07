@@ -19,8 +19,8 @@ Q_table = np.zeros((state_size, action_size))
 
 # Hyperparameters
 total_episodes = 100000      # Total episodes for training
-learning_rate = 0.8          # Learning rate
-max_steps = 99               # Max steps per episode
+learning_rate = 0.7          # Learning rate
+max_steps = 500               # Max steps per episode
 gamma = 0.95                 # Discounting rate
 epsilon = 1.0                # Exploration rate
 max_epsilon = 1.0            # Exploration probability at start
