@@ -9,3 +9,9 @@ np.random.seed(42)
 size = 4
 random_map = generate_random_map(size=size, seed=42)  # Ensure the seed matches the one used during training
 env = gym.make('FrozenLake-v1', desc=random_map, is_slippery=True, render_mode=None)
+# Load the trained Q-table
+Q_table = np.load('q_table.npy')
+
+# Run the environment with the loaded Q-table
+num_episodes = 10  # Number of episodes to run
+max_steps = 99  # Maximum number of steps per episode
