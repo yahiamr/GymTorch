@@ -15,7 +15,8 @@ env = gym.make('FrozenLake-v1', desc=random_map, is_slippery=True, render_mode=N
 state_size = env.observation_space.n
 action_size = env.action_space.n
 Q_table = np.zeros((state_size, action_size))
-
+total_rewards = []  # To store total rewards per episode
+episode_lengths = []  # To store the number of steps per episode
 
 # Hyperparameters
 total_episodes = 100000      # Total episodes for training
