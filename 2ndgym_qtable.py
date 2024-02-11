@@ -18,16 +18,30 @@ action_size = env.action_space.n
 Q_table = np.zeros((state_size, action_size))
 total_rewards = []  # To store total rewards per episode
 episode_lengths = []  # To store the number of steps per episode
+win_count = 0  # To store the number of wins (reaching the goal)
+win_rates = []  # To store the win rate after each episode
+
 
 # Hyperparameters
-total_episodes = 100000      # Total episodes for training
-learning_rate = 0.7          # Learning rate
-max_steps = 500               # Max steps per episode
-gamma = 0.95                 # Discounting rate
-epsilon = 1.0                # Exploration rate
-max_epsilon = 1.0            # Exploration probability at start
-min_epsilon = 0.01           # Minimum exploration probability
-decay_rate = 0.005           # Exponential decay rate for exploration probability
+total_episodes = 1000000      # Total episodes for training
+learning_rate = 0.2         # Learning rate
+max_steps = 100             # Max steps per episode
+gamma = 0.99                # Discounting rate
+epsilon = 1.0               # Exploration rate at the start
+max_epsilon = 1.0           # Maximum exploration probability
+min_epsilon = 0.1           # Minimum exploration probability
+decay_rate = 0.0001           # Exponential decay rate for exploration probability
+
+# Hyperparameters
+# total_episodes = 100000      # Total episodes for training
+# learning_rate = 0.7          # Learning rate
+# max_steps = 500               # Max steps per episode
+# gamma = 0.95                 # Discounting rate
+# epsilon = 1.0                # Exploration rate
+# max_epsilon = 1.0            # Exploration probability at start
+# min_epsilon = 0.01           # Minimum exploration probability
+# decay_rate = 0.005           # Exponential decay rate for exploration probability
+
 
 for episode in range(total_episodes):
     state , info= env.reset()
@@ -35,6 +49,7 @@ for episode in range(total_episodes):
     done = False
     total_reward = 0  # Reset total reward for this episode
     step = 0  # Reset step counter for this episode
+    won = False  # To track if the goal is reached in this episode
     #inner loop for single episode
     for step in range(max_steps):
          # Exploration-exploitation trade-off
@@ -52,15 +67,34 @@ for episode in range(total_episodes):
         Q_table[state, action] = Q_table[state, action] + learning_rate * (reward + gamma * np.max(Q_table[new_state, :]) - Q_table[state, action])
 
         state = new_state
-        total_reward += reward
+
+
         if done:
+            if reward == 1:  # Assuming a reward of 1 indicates reaching the goal
+                won = True
+                win_count += 1
             break
-     # Store metrics
-    total_rewards.append(total_reward)
-    episode_lengths.append(step + 1)  # Add 1 since step starts at 0
+    # Update and store win rate
+    win_rate = win_count / (episode + 1)
+    win_rates.append(win_rate)
  # Reduce epsilon (less exploration over time)
     epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay_rate * episode)
 
 # Print the trained Q-table
 print(Q_table)
 np.save('q_table.npy', Q_table)  # Saves the Q-table to 'q_table.npy'
+
+
+# Function to calculate moving average
+def moving_average(x, periods=100):
+    return np.convolve(x, np.ones(periods) / periods, mode='valid')
+
+# Plot win rate and its moving average
+plt.figure(figsize=(12, 6))
+plt.plot(win_rates, label='Win Rate')
+plt.plot(moving_average(win_rates), label='Win Rate (Moving Average)', linewidth=2)
+plt.xlabel('Episodes')
+plt.ylabel('Win Rate')
+plt.title('Win Rate and Moving Average of Win Rate')
+plt.legend()
+plt.show()
