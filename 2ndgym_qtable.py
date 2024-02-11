@@ -1,5 +1,6 @@
 import numpy as np
 import gymnasium as gym
+import matplotlib.pyplot as plt
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 # Set seeds
@@ -32,6 +33,8 @@ for episode in range(total_episodes):
     state , info= env.reset()
 
     done = False
+    total_reward = 0  # Reset total reward for this episode
+    step = 0  # Reset step counter for this episode
     #inner loop for single episode
     for step in range(max_steps):
          # Exploration-exploitation trade-off
@@ -49,9 +52,12 @@ for episode in range(total_episodes):
         Q_table[state, action] = Q_table[state, action] + learning_rate * (reward + gamma * np.max(Q_table[new_state, :]) - Q_table[state, action])
 
         state = new_state
-
+        total_reward += reward
         if done:
             break
+     # Store metrics
+    total_rewards.append(total_reward)
+    episode_lengths.append(step + 1)  # Add 1 since step starts at 0
  # Reduce epsilon (less exploration over time)
     epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay_rate * episode)
 
