@@ -24,12 +24,12 @@ win_rates = []  # To store the win rate after each episode
 
 # Hyperparameters
 total_episodes = 1000000      # Total episodes for training
-learning_rate = 0.2         # Learning rate
+learning_rate = 0.005         # Learning rate
 max_steps = 100             # Max steps per episode
 gamma = 0.99                # Discounting rate
 epsilon = 1.0               # Exploration rate at the start
 max_epsilon = 1.0           # Maximum exploration probability
-min_epsilon = 0.1           # Minimum exploration probability
+min_epsilon = 0.01           # Minimum exploration probability
 decay_rate = 0.0001           # Exponential decay rate for exploration probability
 
 # Hyperparameters
@@ -77,8 +77,12 @@ for episode in range(total_episodes):
     # Update and store win rate
     win_rate = win_count / (episode + 1)
     win_rates.append(win_rate)
- # Reduce epsilon (less exploration over time)
-    epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay_rate * episode)
+  # Reduce epsilon (less exploration over time)
+    epsilon = max(min_epsilon, max_epsilon * np.exp(-decay_rate * episode))  
+    # Progress Printing
+    if (episode + 1) % 10000 == 0:  # Print progress every 10,000 episodes
+        print(f"Episode: {episode + 1}, Win Rate: {win_rate:.3f}, Epsilon: {epsilon:.3f}")
+
 
 # Print the trained Q-table
 print(Q_table)
