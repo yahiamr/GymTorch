@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import gymnasium as gym
+from collections import deque
 
 class DQN(nn.Module):
     def __init__(self, state_size, action_size, hidden_size=50):
