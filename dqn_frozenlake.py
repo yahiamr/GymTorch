@@ -15,3 +15,5 @@ class DQN(nn.Module):
 
     def forward(self, x):
         return self.network(x)
+env = gym.make('FrozenLake-v1', is_slippery=True)
+replay_buffer = deque(maxlen=10000)
