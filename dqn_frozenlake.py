@@ -17,3 +17,11 @@ class DQN(nn.Module):
         return self.network(x)
 env = gym.make('FrozenLake-v1', is_slippery=True)
 replay_buffer = deque(maxlen=10000)
+
+#select action 
+def select_action(state, policy_net, epsilon, n_actions):
+    if np.random.rand() > epsilon:
+        with torch.no_grad():
+            return policy_net(state).max(1)[1].view(1, 1)
+    else:
+        return torch.tensor([[np.random.choice(n_actions)]], dtype=torch.long)
