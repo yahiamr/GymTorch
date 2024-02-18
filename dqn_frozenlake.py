@@ -25,3 +25,11 @@ replay_buffer = deque(maxlen=10000)
                 return policy_net(state).max(1)[1].view(1, 1)
         else:
             return torch.tensor([[np.random.choice(n_actions)]], dtype=torch.long)
+# Hyperparameters
+BATCH_SIZE = 128
+GAMMA = 0.999
+EPS_START = 0.9
+EPS_END = 0.05
+EPS_DECAY = 200
+TARGET_UPDATE = 10
+n_actions = env.action_space.n
