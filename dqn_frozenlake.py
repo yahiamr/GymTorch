@@ -33,3 +33,10 @@ EPS_END = 0.05
 EPS_DECAY = 200
 TARGET_UPDATE = 10
 n_actions = env.action_space.n
+
+    def optimize_model():
+    if len(replay_buffer) < BATCH_SIZE:
+        return
+    transitions = random.sample(replay_buffer, BATCH_SIZE)
+    batch = Transition(*zip(*transitions))
+
