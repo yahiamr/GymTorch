@@ -1,5 +1,4 @@
 
-```markdown
 # Optimizing the Model in DQN Training
 
 The `optimize_model` function is crucial in the DQN training loop. It's responsible for updating the neural network (policy network) that approximates the Q-value function. Here's a thorough step-by-step explanation of what happens inside this function:
