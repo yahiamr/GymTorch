@@ -42,15 +42,4 @@ n_actions = env.action_space.n
         rewards = torch.cat(batch.reward)
         return states, actions, rewards
 
-    def optimize_model():
-    if len(replay_buffer) < BATCH_SIZE:
-        return
-    transitions = random.sample(replay_buffer, BATCH_SIZE)
-    batch = Transition(*zip(*transitions))
-    
-    # Compute Q-values for the current states
-    state_batch = torch.stack(batch.state)
-    action_batch = torch.cat(batch.action)
-    q_values = policy_net(state_batch).gather(1, action_batch)
-
 
