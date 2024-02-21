@@ -34,6 +34,14 @@ EPS_DECAY = 200
 TARGET_UPDATE = 10
 n_actions = env.action_space.n
 
+    def extract_tensors(transitions):
+        # Convert batch-array of Transitions to Transition of batch-arrays.
+        batch = Transition(*zip(*transitions))
+        states = torch.cat(batch.state)
+        actions = torch.cat(batch.action)
+        rewards = torch.cat(batch.reward)
+        return states, actions, rewards
+
     def optimize_model():
     if len(replay_buffer) < BATCH_SIZE:
         return
