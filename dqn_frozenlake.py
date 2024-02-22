@@ -41,5 +41,9 @@ n_actions = env.action_space.n
         actions = torch.cat(batch.action)
         rewards = torch.cat(batch.reward)
         return states, actions, rewards
+        
+    def compute_q_values(states, actions):
+    return policy_net(states).gather(1, actions.unsqueeze(-1))
+
 
 
