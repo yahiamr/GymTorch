@@ -43,7 +43,10 @@ n_actions = env.action_space.n
         return states, actions, rewards
         
     def compute_q_values(states, actions):
-    return policy_net(states).gather(1, actions.unsqueeze(-1))
+        return policy_net(states).gather(1, actions.unsqueeze(-1))
+    
+    def compute_next_state_values(non_final_next_states):
+        return target_net(non_final_next_states).max(1)[0].detach()
 
 
 
