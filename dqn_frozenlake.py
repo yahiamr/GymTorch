@@ -48,5 +48,7 @@ n_actions = env.action_space.n
     def compute_next_state_values(non_final_next_states):
         return target_net(non_final_next_states).max(1)[0].detach()
 
+    def compute_expected_q_values(next_state_values, rewards):
+        return (next_state_values * GAMMA) + rewards
 
 
