@@ -51,4 +51,5 @@ n_actions = env.action_space.n
     def compute_expected_q_values(next_state_values, rewards):
         return (next_state_values * GAMMA) + rewards
 
-
+    def compute_loss(state_action_values, expected_state_action_values):
+        return F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(-1))
