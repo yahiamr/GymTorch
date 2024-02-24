@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -15,8 +16,7 @@ class DQN(nn.Module):
 
     def forward(self, x):
         return self.network(x)
-env = gym.make('FrozenLake-v1', is_slippery=True)
-replay_buffer = deque(maxlen=10000)
+
 
 #select action 
     def select_action(state, policy_net, epsilon, n_actions):
@@ -25,14 +25,7 @@ replay_buffer = deque(maxlen=10000)
                 return policy_net(state).max(1)[1].view(1, 1)
         else:
             return torch.tensor([[np.random.choice(n_actions)]], dtype=torch.long)
-# Hyperparameters
-BATCH_SIZE = 128
-GAMMA = 0.999
-EPS_START = 0.9
-EPS_END = 0.05
-EPS_DECAY = 200
-TARGET_UPDATE = 10
-n_actions = env.action_space.n
+        
 
     def extract_tensors(transitions):
         # Convert batch-array of Transitions to Transition of batch-arrays.
@@ -53,3 +46,18 @@ n_actions = env.action_space.n
 
     def compute_loss(state_action_values, expected_state_action_values):
         return F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(-1))
+
+
+
+# Hyperparameters
+BATCH_SIZE = 128
+GAMMA = 0.999
+EPS_START = 0.9
+EPS_END = 0.05
+EPS_DECAY = 200
+TARGET_UPDATE = 10
+
+
+env = gym.make('FrozenLake-v1', is_slippery=True)
+replay_buffer = deque(maxlen=10000)
+n_actions = env.action_space.n
