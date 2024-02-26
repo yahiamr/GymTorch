@@ -55,10 +55,27 @@ class Agent:
         self.Transition = namedtuple('Transition',
                                      ('state', 'action', 'next_state', 'reward'))
 
-    def select_action(self, state):
-        """Select an action using the epsilon-greedy policy."""
-        pass
 
+    def select_action(self, state):
+        """Selects an action using epsilon-greedy policy."""
+        sample = np.random.rand()
+        eps_threshold = self.eps_end + (self.eps_start - self.eps_end) * \
+                        np.exp(-1. * self.steps_done / self.eps_decay)
+        self.steps_done += 1
+    
+        if sample > eps_threshold:
+            with torch.no_grad():
+                # Here, the network is in evaluation mode and torch.no_grad() is used to
+                # turn off gradients computation to speed up this forward pass.
+                state = torch.tensor([state], dtype=torch.float32)  # Convert state to tensor
+                self.policy_net.eval()  # Set the network to evaluation mode
+                action_values = self.policy_net(state)
+                self.policy_net.train()  # Set the network back to training mode
+                return torch.argmax(action_values, dim=1).view(1, 1)  # Return the action with the highest value
+        else:
+            # Return a random action
+            return torch.tensor([[np.random.choice(self.action_size)]], dtype=torch.long)
+    
     def store_transition(self, state, action, next_state, reward):
         """Store a transition in memory."""
         pass
