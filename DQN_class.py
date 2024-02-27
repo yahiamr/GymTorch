@@ -77,9 +77,18 @@ class Agent:
             return torch.tensor([[np.random.choice(self.action_size)]], dtype=torch.long)
     
     def store_transition(self, state, action, next_state, reward):
-        """Store a transition in memory."""
-        pass
-
+        """Stores a transition in memory."""
+        # Convert state, action, next_state, and reward to appropriate PyTorch tensors
+        # Note: This conversion is necessary if your environment's outputs are not already tensors.
+        # You may need to adjust the data types based on your specific environment and model requirements.
+        state = torch.tensor([state], dtype=torch.float)
+        action = torch.tensor([action], dtype=torch.long)
+        next_state = torch.tensor([next_state], dtype=torch.float)
+        reward = torch.tensor([reward], dtype=torch.float)
+    
+        # Store the transition in the replay buffer
+        self.memory.append(self.Transition(state, action, next_state, reward))
+    
     def sample_batch(self):
         """Sample a batch of transitions from memory."""
         pass
