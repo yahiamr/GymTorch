@@ -1,3 +1,4 @@
+import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -90,8 +91,28 @@ class Agent:
         self.memory.append(self.Transition(state, action, next_state, reward))
     
     def sample_batch(self):
-        """Sample a batch of transitions from memory."""
-        pass
+        """Randomly samples a batch of transitions from memory."""
+        # Ensure that we have enough samples in the memory for a batch
+        if len(self.memory) < self.batch_size:
+            return None
+        
+        # Randomly sample a batch of transitions from the memory
+        transitions = random.sample(self.memory, self.batch_size)
+        
+        # The following line transposes the batch (a batch of transitions)
+        # to a transition of batches. This is a common idiom to convert a list
+        # of tuples into a tuple of lists in a very efficient way.
+        batch = self.Transition(*zip(*transitions))
+        
+        # Convert batch of transitions to separate batches of states, actions,
+        # next states, and rewards.
+        # Note: torch.cat is used to concatenate a list of tensors into a single tensor.
+        states = torch.cat(batch.state)
+        actions = torch.cat(batch.action)
+        next_states = torch.cat(batch.next_state)
+        rewards = torch.cat(batch.reward)
+        
+        return states, actions, next_states, rewards
 
     def learn(self):
         """Update the model by sampling from memory and performing gradient descent."""
