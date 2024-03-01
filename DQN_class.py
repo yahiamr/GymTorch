@@ -154,7 +154,7 @@ class Agent:
     
     def update_target_net(self):
         """Update the target network with the current policy network's weights."""
-        pass
+        self.target_net.load_state_dict(self.policy_net.state_dict())
 
     def optimize_model(self):
         """Perform a single step of the optimization (update) for the policy network."""
