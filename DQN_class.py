@@ -158,7 +158,43 @@ class Agent:
 
     def optimize_model(self):
         """Perform a single step of the optimization (update) for the policy network."""
-        pass
+        # Check if we have enough samples in the memory to sample a batch
+        if len(self.memory) < self.batch_size:
+            return  # Skip if not enough samples
+    
+        # Sample a batch of transitions
+        transitions = self.sample_batch()
+        if transitions is None:
+            return  # Not enough samples to learn from
+    
+        states, actions, next_states, rewards = transitions
+    
+        # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
+        # columns of actions taken. These are the actions which would've been taken
+        # for each batch state according to policy_net
+        state_action_values = self.policy_net(states).gather(1, actions)
+    
+        # Compute V(s_{t+1}) for all next states.
+        # Expected values of actions for non-final states are computed based
+        # on the older target_net; selecting their best reward with max(1)[0].
+        # We don't want to compute the gradient for this operation, so we use detach().
+        next_state_values = torch.zeros(self.batch_size)
+        non_final_mask = torch.tensor(tuple(map(lambda s: s is not None, next_states)), dtype=torch.bool)
+        non_final_next_states = torch.cat([s for s in next_states if s is not None])
+        next_state_values[non_final_mask] = self.target_net(non_final_next_states).max(1)[0].detach()
+    
+        # Compute the expected Q values
+        expected_state_action_values = (next_state_values * self.gamma) + rewards
+    
+        # Compute Huber loss
+        loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(1))
+    
+        # Optimize the model
+        self.optimizer.zero_grad()
+        loss.backward()
+        for param in self.policy_net.parameters():
+            param.grad.data.clamp_(-1, 1)
+        self.optimizer.step()
 
     def train(self, num_episodes):
         """Train the agent over a specified number of episodes."""
