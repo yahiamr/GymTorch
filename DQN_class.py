@@ -198,4 +198,41 @@ class Agent:
 
     def train(self, num_episodes):
         """Train the agent over a specified number of episodes."""
-        pass
+        for episode in range(num_episodes):
+            # Reset the environment and state
+            state = env.reset()
+            state = torch.tensor([state], dtype=torch.float)
+            total_reward = 0
+
+            for timestep in count():
+                # Select and perform an action
+                action = self.select_action(state)
+                next_state, reward, done, _ = env.step(action.item())
+                total_reward += reward
+                reward = torch.tensor([reward], dtype=torch.float)
+
+                if not done:
+                    next_state = torch.tensor([next_state], dtype=torch.float)
+                else:
+                    next_state = None  # Next state is None if the episode is done
+
+                # Store the transition in memory
+                self.store_transition(state, action, next_state, reward)
+
+                # Move to the next state
+                state = next_state
+
+                # Perform one step of the optimization
+                self.optimize_model()
+
+                if done:
+                    break
+
+            # Update the target network, copying all weights and biases in DQN
+            if episode % self.target_update == 0:
+                self.update_target_net()
+
+            # Decrement epsilon
+            self.epsilon = max(self.eps_end, self.eps_decay * self.epsilon)  # Adjust epsilon according to your decay strategy
+
+            print(f'Episode {episode+1}/{num_episodes}, Total Reward: {total_reward}')
