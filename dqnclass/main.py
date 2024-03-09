@@ -1,4 +1,5 @@
 import gym
+import os
 
 if __name__ == "__main__":
     # Initialize the Gym environment
