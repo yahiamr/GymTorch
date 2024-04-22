@@ -29,7 +29,7 @@ class Agent:
         batch_size=128, 
         gamma=0.99,
         eps_start=0.9, 
-        eps_end=0.05, 
+        eps_end=0.1, 
         eps_decay=200, 
         target_update=10, 
         lr=1e-3):
