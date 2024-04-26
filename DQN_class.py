@@ -23,7 +23,15 @@ class DQN(nn.Module):
 
 # Agent class handles the interaction with the environment and the learning process.
 class Agent:
-    def __init__(self, state_size, action_size, hidden_size=50, batch_size=128, gamma=0.99, eps_start=0.9, eps_end=0.1, eps_decay=200, target_update=10, lr=1e-3):
+    def __init__(self, state_size, action_size, 
+        hidden_size=50, 
+        batch_size=128, 
+        gamma=0.99, 
+        eps_start=0.9, 
+        eps_end=0.1, 
+        eps_decay=200, 
+        target_update=10, 
+        lr=1e-3):
         """Initialize the agent with the environment information and hyperparameters."""
         self.state_size = state_size  # Number of state inputs.
         self.action_size = action_size  # Number of possible actions.
