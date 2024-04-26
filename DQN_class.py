@@ -1,61 +1,50 @@
-import random
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import numpy as np
-from collections import deque, namedtuple
+import random  # Import the random module for generating random numbers.
+import torch  # Import PyTorch, a library for tensor computations and building neural networks.
+import torch.nn as nn  # Import the neural network component from PyTorch.
+import torch.optim as optim  # Import the optimization algorithms from PyTorch.
+import numpy as np  # Import NumPy for numerical operations.
+from collections import deque, namedtuple  # Import deque for a double-ended queue and namedtuple for creating tuple subclasses with named fields.
 
+# Definition of the Deep Q-Network class, which extends the PyTorch Module class.
 class DQN(nn.Module):
     def __init__(self, state_size, action_size, hidden_size=50):
-        """Initialize the Deep Q-Network with given sizes for input (state), output (action),
-        and the hidden layer."""
-        super(DQN, self).__init__()
-        # Define the neural network structure
+        """Initialize the DQN with specified input size, output size, and hidden layer size."""
+        super(DQN, self).__init__()  # Initialize the superclass (nn.Module).
+        # The neural network consists of two linear layers separated by a ReLU activation.
         self.network = nn.Sequential(
-            nn.Linear(state_size, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, action_size)
+            nn.Linear(state_size, hidden_size),  # Linear layer from state to hidden layer.
+            nn.ReLU(),  # Activation function to introduce non-linearity.
+            nn.Linear(hidden_size, action_size)  # Linear layer from hidden layer to output actions.
         )
 
     def forward(self, x):
-        """Forward pass through the network."""
-        return self.network(x)
+        """Define the forward pass through the network."""
+        return self.network(x)  # Pass input x through the network and return the output.
 
+# Agent class handles the interaction with the environment and the learning process.
 class Agent:
-    def __init__(self, 
-        state_size, 
-        action_size, 
-        hidden_size=50, 
-        batch_size=128, 
-        gamma=0.99,
-        eps_start=0.9, 
-        eps_end=0.1, 
-        eps_decay=200, 
-        target_update=10, 
-        lr=1e-3):
+    def __init__(self, state_size, action_size, hidden_size=50, batch_size=128, gamma=0.99, eps_start=0.9, eps_end=0.1, eps_decay=200, target_update=10, lr=1e-3):
         """Initialize the agent with the environment information and hyperparameters."""
-        self.state_size = state_size
-        self.action_size = action_size
-        self.hidden_size = hidden_size
-        self.batch_size = batch_size
-        self.gamma = gamma
-        self.eps_start = eps_start
-        self.eps_end = eps_end
-        self.eps_decay = eps_decay
-        self.target_update = target_update
-        self.lr = lr
+        self.state_size = state_size  # Number of state inputs.
+        self.action_size = action_size  # Number of possible actions.
+        self.hidden_size = hidden_size  # Number of units in the hidden layer.
+        self.batch_size = batch_size  # Number of experiences to sample from memory.
+        self.gamma = gamma  # Discount factor for future rewards.
+        self.eps_start = eps_start  # Initial value for epsilon in the epsilon-greedy policy.
+        self.eps_end = eps_end  # Minimum value of epsilon after decay.
+        self.eps_decay = eps_decay  # Rate at which epsilon decays.
+        self.target_update = target_update  # Frequency of updates to the target network.
+        self.lr = lr  # Learning rate for the optimizer.
 
-        self.policy_net = DQN(state_size, action_size, hidden_size)
-        self.target_net = DQN(state_size, action_size, hidden_size)
-        self.target_net.load_state_dict(self.policy_net.state_dict())
-        self.target_net.eval()  # Set the target network to evaluation mode
+        self.policy_net = DQN(state_size, action_size, hidden_size)  # Neural network for selecting actions.
+        self.target_net = DQN(state_size, action_size, hidden_size)  # Clone of the policy network that lags behind it (for stable learning).
+        self.target_net.load_state_dict(self.policy_net.state_dict())  # Copy weights and biases from policy_net to target_net.
+        self.target_net.eval()  # Set the target network to evaluation mode (no training).
 
-        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=lr)
-        self.memory = deque(maxlen=10000)
-        self.steps_done = 0
-        self.Transition = namedtuple('Transition',
-                                     ('state', 'action', 'next_state', 'reward'))
-
+        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=lr)  # Optimizer for the policy network.
+        self.memory = deque(maxlen=10000)  # A buffer for storing transitions.
+        self.steps_done = 0  # Counter for the number of steps completed.
+        self.Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'))  # A tuple for storing experience data.
 
     def select_action(self, state):
         """Selects an action using epsilon-greedy policy."""
