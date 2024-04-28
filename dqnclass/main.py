@@ -3,7 +3,7 @@ import os
 
 if __name__ == "__main__":
     # Initialize the Gym environment
-    env = gym.make('CartPole-v0')
+    env = gym.make('CartPole-v1')
     
     # Get the size of state space and action space
     state_size = env.observation_space.shape[0]
