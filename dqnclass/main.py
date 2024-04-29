@@ -15,7 +15,7 @@ if __name__ == "__main__":
     gamma = 0.99       # Discount factor for future rewards
     eps_start = 0.9    # Starting value of epsilon
     eps_end = 0.05     # Minimum value of epsilon
-    eps_decay = 200    # Decay rate of epsilon
+    eps_decay = 150    # Decay rate of epsilon
     target_update = 10 # How often to update the target network
     num_episodes = 500 # Number of episodes to train on
     lr = 1e-3          # Learning rate
