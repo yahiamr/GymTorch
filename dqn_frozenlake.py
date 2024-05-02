@@ -59,7 +59,7 @@ GAMMA = 0.999  # Discount factor for future rewards.
 EPS_START = 0.9  # Starting value of epsilon for the epsilon-greedy strategy.
 EPS_END = 0.05  # Minimum value of epsilon after decay.
 EPS_DECAY = 250  # Rate of decay for epsilon.
-TARGET_UPDATE = 10  # How frequently to update the target network.
+TARGET_UPDATE = 8  # How frequently to update the target network.
 
 # Initializing the environment.
 env = gym.make('FrozenLake-v1', is_slippery=True)  # Create the FrozenLake environment, slippery version.
